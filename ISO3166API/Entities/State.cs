@@ -11,7 +11,7 @@ namespace ISO3166API.Entities
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Field {0} is Required")]
-        [StringLength(maximumLength: 2, ErrorMessage = "Field {0} cannot have more than {1} characters")]
+        [StringLength(maximumLength: 3, ErrorMessage = "Field {0} cannot have more than {1} characters")]
         public string Code { get; set; }
 
         [Required(ErrorMessage = "Field {0} is Required")]
@@ -19,5 +19,7 @@ namespace ISO3166API.Entities
 
         [Required(ErrorMessage = "Field {0} is Required")]
         public string SubdivisionCategory { get; set; }
+
+        public Country  Country { get; set; }
     }
 }

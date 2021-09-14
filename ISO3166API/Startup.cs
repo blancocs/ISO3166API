@@ -29,10 +29,13 @@ namespace ISO3166API
         public void ConfigureServices(IServiceCollection services)
         {
 
+
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
+
+
 
             //add dbcontext
             services.AddDbContext<ISO3166DbContext>(options =>
@@ -47,6 +50,8 @@ namespace ISO3166API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

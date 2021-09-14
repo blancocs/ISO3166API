@@ -11,11 +11,17 @@ namespace ISO3166API
     {
         public ISO3166DbContext(DbContextOptions options) : base(options)
         {
+            
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            
 
         }
 
         public DbSet<Country> Countries { get; set; }
         public DbSet<State> States{ get; set; }
-    {
+    
     }
 }

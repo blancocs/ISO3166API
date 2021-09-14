@@ -30,8 +30,8 @@ namespace ISO3166API.Entities
         public string Remarks { get; set; }
 
         public bool Independent { get; set; }
-        public List<State> states { get; set; }
+        public List<State> States { get; set; }
 
     }
 }
-}
+
