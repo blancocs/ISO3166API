@@ -77,5 +77,28 @@ namespace ISO3166API.Controllers
             return NoContent();
         }
 
+
+        [Route("{id:int}/states")]
+        [HttpGet]
+        public async Task<ActionResult<List<State>>> GetStates(int id)
+        {
+
+            var states = await dbContext.States.Where(parent => parent.Country.Id == id).ToListAsync();
+            return states;
+        }
+
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> Put(int id, Country country)
+        {
+            if (country.Id != id)
+                return BadRequest("ID must match");
+
+            dbContext.Update(country);
+            await dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
+
     }
 }

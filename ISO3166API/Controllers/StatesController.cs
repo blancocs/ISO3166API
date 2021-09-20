@@ -15,18 +15,73 @@ namespace ISO3166API.Controllers
     {
         private readonly ISO3166DbContext dbContext;
 
+        public StatesController(ISO3166DbContext dbContext)
+        {
+            this.dbContext = dbContext;
+
+
+        }
+
        
-        [HttpGet("{id:int}")] //get specific country by ID.
+
+        [HttpGet("{id:int}")] //return a province or state by id.
         public async Task<ActionResult<State>> Get(int id)
         {
-            var country = await dbContext.States.FirstOrDefaultAsync(state => state.Id == id);
+            var state = await dbContext.States.FirstOrDefaultAsync(state => state.Id == id);
 
-            if (country == null)
+            if (state == null)
             {
                 return NotFound();
             }
 
-            return country;
+            return state;
         }
+
+        [HttpPost]
+        public async Task<ActionResult> Post(State state)
+        {
+            var country = await dbContext.Countries.Include(x => x.States).FirstOrDefaultAsync(country => country.Id == state.CountryId);
+
+            if (country == null)
+            {
+                return BadRequest("Country not found");
+            }
+
+            dbContext.Add(state);
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
+
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            State state = await dbContext.States.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (state == null)
+            {
+                return NotFound();
+            }
+
+            dbContext.Remove(state);
+            await dbContext.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> Put(int id, State state)
+        {
+            if (state.Id != id)
+                return BadRequest("ID must match");
+
+            dbContext.Update(state);
+            await dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        
+
     }
 }

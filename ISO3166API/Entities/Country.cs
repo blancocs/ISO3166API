@@ -25,7 +25,7 @@ namespace ISO3166API.Entities
         public string Alpha3Code { get; set; }
 
         [Required(ErrorMessage = "Field {0} is Required")]
-        [StringLength(maximumLength: 3, ErrorMessage = "Field {0} cannot have more than {1} characters")]
+        [Range(1,999, ErrorMessage = "Field {0} cannot have more than {1} characters")]
         public int NumericCode { get; set; }
         public string Remarks { get; set; }
 

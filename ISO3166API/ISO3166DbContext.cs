@@ -16,8 +16,9 @@ namespace ISO3166API
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            base.OnModelCreating(modelBuilder);
 
+            //modelBuilder.Entity<State>().HasKey(el=>el.)
         }
 
         public DbSet<Country> Countries { get; set; }
