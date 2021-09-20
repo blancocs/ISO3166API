@@ -1,4 +1,6 @@
-﻿using ISO3166API.Entities;
+﻿using AutoMapper;
+using ISO3166API.DTO;
+using ISO3166API.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,18 +16,18 @@ namespace ISO3166API.Controllers
     public class StatesController : ControllerBase
     {
         private readonly ISO3166DbContext dbContext;
-
-        public StatesController(ISO3166DbContext dbContext)
+        private readonly IMapper mapper;
+        public StatesController(ISO3166DbContext dbContext, IMapper mapper)
         {
             this.dbContext = dbContext;
-
+            this.mapper = mapper;
 
         }
 
        
 
         [HttpGet("{id:int}")] //return a province or state by id.
-        public async Task<ActionResult<State>> Get(int id)
+        public async Task<ActionResult<StateDTO>> Get(int id)
         {
             var state = await dbContext.States.FirstOrDefaultAsync(state => state.Id == id);
 
@@ -34,18 +36,28 @@ namespace ISO3166API.Controllers
                 return NotFound();
             }
 
-            return state;
+            return mapper.Map<StateDTO>(state);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(State state)
+        public async Task<ActionResult> Post(StateCreationDTO stateDTO)
         {
-            var country = await dbContext.Countries.Include(x => x.States).FirstOrDefaultAsync(country => country.Id == state.CountryId);
+           
+            var country = await dbContext.Countries.Include(x => x.States).FirstOrDefaultAsync(country => country.Id == stateDTO.CountryId);
 
             if (country == null)
             {
                 return BadRequest("Country not found");
             }
+
+            var stateExists = country.States.Any(x=> x.Code == stateDTO.Code);
+
+            if (stateExists)
+            {
+                return BadRequest($"Code state '{stateDTO.Code}' already exists for Country {country.CountryName}");
+            }
+
+            var state = mapper.Map<State>(stateDTO);
 
             dbContext.Add(state);
             await dbContext.SaveChangesAsync();
@@ -70,10 +82,12 @@ namespace ISO3166API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> Put(int id, State state)
+        public async Task<ActionResult> Put(int id, StateDTO stateDTO)
         {
-            if (state.Id != id)
+            if (stateDTO.Id != id)
                 return BadRequest("ID must match");
+
+            var state = mapper.Map<State>(stateDTO);
 
             dbContext.Update(state);
             await dbContext.SaveChangesAsync();
