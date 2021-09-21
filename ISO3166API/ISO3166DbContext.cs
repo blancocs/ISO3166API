@@ -1,4 +1,5 @@
 ﻿using ISO3166API.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ISO3166API
 {
-    public class ISO3166DbContext : DbContext
+    public class ISO3166DbContext : IdentityDbContext
     {
         public ISO3166DbContext(DbContextOptions options) : base(options)
         {

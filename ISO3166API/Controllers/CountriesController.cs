@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using ISO3166API.DTO;
 using ISO3166API.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -26,7 +28,8 @@ namespace ISO3166API.Controllers
 
         }
 
-        [HttpGet]  //Get all CountryList
+        [HttpGet]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]//Get all CountryList
         public async Task<ActionResult<List<CountryDTO>>> Get()
         {
             var countries = await dbContext.Countries.ToListAsync();
@@ -36,7 +39,8 @@ namespace ISO3166API.Controllers
 
 
         
-        [HttpGet("{id:int}")] //get specific country by ID.
+        [HttpGet("{id:int}", Name ="Get")] //get specific country by ID.
+
         public async Task<ActionResult<CountryDTO>> Get(int id)
         {
             var country = await dbContext.Countries.Include(x => x.States).FirstOrDefaultAsync(country => country.Id == id);
@@ -46,7 +50,7 @@ namespace ISO3166API.Controllers
                 return NotFound();
             }
 
-            return mapper.Map<CountryDTO>(country); ;
+            return mapper.Map<CountryDTO>(country);
         }
 
 
@@ -63,7 +67,9 @@ namespace ISO3166API.Controllers
 
             dbContext.Add(country);
             await dbContext.SaveChangesAsync();
-            return Ok();
+
+            return CreatedAtRoute("Get", new { id = country.Id }, mapper.Map<CountryDTO>(country));
+            
 
         }
 
@@ -104,12 +110,10 @@ namespace ISO3166API.Controllers
             if (country.Id != id)
                 return BadRequest("ID must match");
 
-            Country countryExists = await dbContext.Countries.FirstOrDefaultAsync(x => x.Id == id);
+            var countryExists = await dbContext.Countries.AnyAsync(x => x.Id == id);
 
-            if (countryExists == null)
-            {
-                return NotFound();
-            }
+            if (countryExists) return NotFound();
+            
 
             var updatedCountry = mapper.Map<Country>(country);
             dbContext.Update(updatedCountry);

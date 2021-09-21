@@ -26,7 +26,7 @@ namespace ISO3166API.Controllers
 
        
 
-        [HttpGet("{id:int}")] //return a province or state by id.
+        [HttpGet("{id:int}", Name ="GetState")] //return a province or state by id.
         public async Task<ActionResult<StateDTO>> Get(int id)
         {
             var state = await dbContext.States.FirstOrDefaultAsync(state => state.Id == id);
@@ -61,7 +61,8 @@ namespace ISO3166API.Controllers
 
             dbContext.Add(state);
             await dbContext.SaveChangesAsync();
-            return Ok();
+            
+            return CreatedAtRoute("GetState", new { id = state.Id }, mapper.Map<StateDTO>(state));
         }
 
 
@@ -87,11 +88,15 @@ namespace ISO3166API.Controllers
             if (stateDTO.Id != id)
                 return BadRequest("ID must match");
 
+            var countryExists = await dbContext.Countries.AnyAsync(x => x.Id == id);
+
+            if (countryExists) return NotFound();
+
             var state = mapper.Map<State>(stateDTO);
 
             dbContext.Update(state);
             await dbContext.SaveChangesAsync();
-
+            
             return Ok();
         }
 
