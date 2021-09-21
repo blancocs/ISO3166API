@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using ISO3166API.DTO;
 using ISO3166API.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +15,13 @@ namespace ISO3166API.Controllers
 {
     [Route("api/states")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class StatesController : ControllerBase
     {
         private readonly ISO3166DbContext dbContext;
         private readonly IMapper mapper;
+
+       
         public StatesController(ISO3166DbContext dbContext, IMapper mapper)
         {
             this.dbContext = dbContext;
@@ -29,6 +34,7 @@ namespace ISO3166API.Controllers
         [HttpGet("{id:int}", Name ="GetState")] //return a province or state by id.
         public async Task<ActionResult<StateDTO>> Get(int id)
         {
+            
             var state = await dbContext.States.FirstOrDefaultAsync(state => state.Id == id);
 
             if (state == null)

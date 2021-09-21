@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ISO3166API.DTO;
 using ISO3166API.Entities;
+using ISO3166API.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ namespace ISO3166API.Controllers
 {
     [Route("api/countries")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class CountriesController : ControllerBase
     {
 
@@ -28,11 +30,14 @@ namespace ISO3166API.Controllers
 
         }
 
-        [HttpGet]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]//Get all CountryList
-        public async Task<ActionResult<List<CountryDTO>>> Get()
+        [HttpGet]//Get all CountryList
+        public async Task<ActionResult<List<CountryDTO>>> Get([FromQuery] PaginationDTO paginacionDTO)
         {
-            var countries = await dbContext.Countries.ToListAsync();
+
+            var queryable = dbContext.Countries.AsQueryable();
+            await HttpContext.insertPaginationHeaderValues(queryable);
+            
+            var countries = await queryable.OrderBy(country => country.CountryName).Paginate(paginacionDTO).ToListAsync();
 
             return mapper.Map<List<CountryDTO>>(countries);
         }
@@ -96,10 +101,14 @@ namespace ISO3166API.Controllers
 
         [Route("{id:int}/states")]
         [HttpGet]
-        public async Task<ActionResult<List<StateDTO>>> GetStates(int id)
+        public async Task<ActionResult<List<StateDTO>>> GetStates(int id, [FromQuery] PaginationDTO paginationDTO)
         {
+            var queryable = dbContext.States.Where(parent => parent.Country.Id == id).AsQueryable();
+            
+            await HttpContext.insertPaginationHeaderValues(queryable);
 
-            var states = await dbContext.States.Where(parent => parent.Country.Id == id).ToListAsync();
+            var states = await queryable.OrderBy(state => state.Code).Paginate(paginationDTO).ToListAsync();
+
             return mapper.Map<List<StateDTO>>(states);
         }
 
