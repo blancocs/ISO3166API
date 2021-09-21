@@ -9,7 +9,7 @@ namespace ISO3166API.Utilities
 {
     public static class HttpContextExtensions
     {
-        public async static Task insertPaginationHeaderValues <T> (this HttpContext httpContext, IQueryable<T> queryable)
+        public async static Task InsertPaginationHeaderValues <T> (this HttpContext httpContext, IQueryable<T> queryable)
         {
             if (httpContext == null) { throw new ArgumentException(nameof(httpContext)); }
 

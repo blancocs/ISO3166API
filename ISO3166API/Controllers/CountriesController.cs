@@ -35,7 +35,7 @@ namespace ISO3166API.Controllers
         {
 
             var queryable = dbContext.Countries.AsQueryable();
-            await HttpContext.insertPaginationHeaderValues(queryable);
+            await HttpContext.InsertPaginationHeaderValues(queryable);
             
             var countries = await queryable.OrderBy(country => country.CountryName).Paginate(paginacionDTO).ToListAsync();
 
@@ -105,7 +105,7 @@ namespace ISO3166API.Controllers
         {
             var queryable = dbContext.States.Where(parent => parent.Country.Id == id).AsQueryable();
             
-            await HttpContext.insertPaginationHeaderValues(queryable);
+            await HttpContext.InsertPaginationHeaderValues(queryable);
 
             var states = await queryable.OrderBy(state => state.Code).Paginate(paginationDTO).ToListAsync();
 
@@ -121,7 +121,7 @@ namespace ISO3166API.Controllers
 
             var countryExists = await dbContext.Countries.AnyAsync(x => x.Id == id);
 
-            if (countryExists) return NotFound();
+            if (!countryExists) return NotFound();
             
 
             var updatedCountry = mapper.Map<Country>(country);

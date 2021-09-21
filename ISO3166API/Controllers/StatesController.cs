@@ -96,7 +96,7 @@ namespace ISO3166API.Controllers
 
             var countryExists = await dbContext.Countries.AnyAsync(x => x.Id == id);
 
-            if (countryExists) return NotFound();
+            if (!countryExists) return NotFound();
 
             var state = mapper.Map<State>(stateDTO);
 
