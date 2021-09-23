@@ -94,7 +94,7 @@ namespace ISO3166API.Controllers
             if (stateDTO.Id != id)
                 return BadRequest("ID must match");
 
-            var countryExists = await dbContext.Countries.AnyAsync(x => x.Id == id);
+            var countryExists = await dbContext.Countries.AnyAsync(x => x.Id == stateDTO.CountryId);
 
             if (!countryExists) return NotFound();
 

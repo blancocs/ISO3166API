@@ -95,9 +95,9 @@ namespace ISO3166API
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("http://localhost")
+                    builder.WithOrigins("http://localhost:3000/")
                         .AllowAnyMethod()
-                        .AllowAnyHeader()
+                        .AllowAnyHeader().AllowAnyOrigin()
                         .WithExposedHeaders(new string[] { "TotalItems" });
                 });
             });

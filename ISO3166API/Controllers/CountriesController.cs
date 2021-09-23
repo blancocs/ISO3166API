@@ -64,7 +64,6 @@ namespace ISO3166API.Controllers
         {
             var countryExists = await dbContext.Countries.AnyAsync(x => x.Alpha2Code == countryDTO.Alpha2Code ||
                                                                 x.CountryName.Trim() == countryDTO.CountryName.Trim());
-
             if (countryExists)
                 return BadRequest("there is one country with those values");
 
@@ -114,9 +113,9 @@ namespace ISO3166API.Controllers
 
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> Put(int id, CountryDTO country)
+        public async Task<ActionResult> Put(int id, CountryDTO countryDTO)
         {
-            if (country.Id != id)
+            if (countryDTO.Id != id)
                 return BadRequest("ID must match");
 
             var countryExists = await dbContext.Countries.AnyAsync(x => x.Id == id);
@@ -124,7 +123,7 @@ namespace ISO3166API.Controllers
             if (!countryExists) return NotFound();
             
 
-            var updatedCountry = mapper.Map<Country>(country);
+            var updatedCountry = mapper.Map<Country>(countryDTO);
             dbContext.Update(updatedCountry);
             await dbContext.SaveChangesAsync();
 

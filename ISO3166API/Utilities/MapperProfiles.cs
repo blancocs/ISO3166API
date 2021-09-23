@@ -14,9 +14,11 @@ namespace ISO3166API.Utilities
         {
             CreateMap<CountryCreationDTO, Country>();
             CreateMap<Country, CountryDTO>();
+            CreateMap<CountryDTO, Country>();
 
             CreateMap<StateCreationDTO, State>();
             CreateMap<State, StateDTO>();
+            CreateMap<StateDTO, State>();
         }
     }
 }
