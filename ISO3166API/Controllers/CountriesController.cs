@@ -62,8 +62,8 @@ namespace ISO3166API.Controllers
         [HttpPost] //insert country on database. using DTO.
         public async Task<ActionResult> Post(CountryCreationDTO countryDTO)
         {
-            var countryExists = await dbContext.Countries.AnyAsync(x => x.Alpha2Code == countryDTO.Alpha2Code ||
-                                                                x.CountryName.Trim() == countryDTO.CountryName.Trim());
+            var countryExists = await dbContext.Countries.AnyAsync(x => x.Alpha2Code.ToUpper() == countryDTO.Alpha2Code.ToUpper() ||
+                                                                x.CountryName.Trim().ToUpper() == countryDTO.CountryName.Trim().ToUpper());
             if (countryExists)
                 return BadRequest("there is one country with those values");
 

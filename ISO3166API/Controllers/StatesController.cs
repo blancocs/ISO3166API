@@ -56,7 +56,7 @@ namespace ISO3166API.Controllers
                 return BadRequest("Country not found");
             }
 
-            var stateExists = country.States.Any(x=> x.Code == stateDTO.Code);
+            var stateExists = country.States.Any(x=> x.Code.ToUpper() == stateDTO.Code.ToUpper());
 
             if (stateExists)
             {
